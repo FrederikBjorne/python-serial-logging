@@ -10,13 +10,19 @@ from observer import Observable
 
 class SerialReader(Thread, Observable):
     '''
-    This class is responsible for reading from the serial port and update log lines
-    to its registered observers. Quits if stop() is called.
+    This class is responsible for reading from the serial port and update log lines to its
+    registered observers. Quits if stop() is called. Each log line is timestamped as default.
     '''
     THREAD_NAME = 'SerialReader'
     logger = logging.getLogger(THREAD_NAME)
 
     def __init__(self, serial, callback, do_timestamp = True, name = THREAD_NAME):
+        """
+        :param serial: A Serial object for communicating with a serial port.
+        :param callback: A callback method for calling back to application when error occurs.
+        :param do_timestamp: Add a timestamp to each line intercepted from the serial port.
+        :param name: The thread name.
+        """
         Thread.__init__(self, name = name)
         Observable.__init__(self)
         self.setDaemon(True)
@@ -52,7 +58,7 @@ class SerialReader(Thread, Observable):
         self.logger.debug('stop reading from serial port')
         if self.is_alive():
             self.join()
-        self.logger.debug('reader has terminated')
+        self.logger.info('reader has terminated')
 
     def run(self):
         try:
@@ -62,6 +68,7 @@ class SerialReader(Thread, Observable):
             self.logger.info('Start reading from serial port.')
             while not self._stop.is_set():
                 # we loop for every line and if no endline is found, then read timeout will occur.
+
                 line = self._port.readline().decode('ascii', 'backslashreplace')
                 sleep(0.1)  # let in other threads
                 if first_line_received:
@@ -76,6 +83,6 @@ class SerialReader(Thread, Observable):
         except Exception as e:  # this may occur if readline fails handling an escape character
                                 # http://pyserial.readthedocs.io/en/latest/shortintro.html#readline
             self.logger.error('Error: {}'.format(e))
-            self._callback('{} has stopped running. error: {}'.format(self.getName(), e))  # call back error
+            self._callback('{} has stopped running. error: {}'.format(self.getName(), e))
 
         self.logger.info('stopped reading from serial port.')

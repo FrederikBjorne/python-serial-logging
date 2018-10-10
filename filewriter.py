@@ -23,6 +23,13 @@ class FileWriter(Thread):
                  read_queue_timeout=READ_NEW_LOGLINE_TMO,
                  name=THREAD_NAME,
                  encoding='utf8'):
+        """
+        :param log_file_path: The file path to write log lines to.
+        :param callback: A callback method for calling back to application when error occurs.
+        :param read_queue_timeout: The read timeout to avoid blocking.
+        :param name: The thread name.
+        :param encoding: The encoding format when writing to file.
+        """
         super(FileWriter, self).__init__(name = name)
         self._read_queue_timeout = read_queue_timeout
         self._log_file_path = log_file_path
@@ -43,16 +50,16 @@ class FileWriter(Thread):
                                                    self._encoding)
 
     def put(self, text_line):
-        '''
+        """
         Puts a text line to the text queue to be written to the specified file for logging.
         :param text_line: A text line to be written to file.
-        '''
+        """
         self._log_line_queue.put(text_line)  # Queue calls are thread-safe
 
     def stop(self):
-        '''
+        """
         Stop writing to a log file from the internal queue and commit suicide.
-        '''
+        """
         self._stop.set()
         self.logger.debug('writer stopped')
         if self.is_alive():
