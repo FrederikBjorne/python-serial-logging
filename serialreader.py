@@ -3,19 +3,20 @@
 import logging
 from datetime import datetime
 from threading import Thread, Event
+from time import sleep
 
 from observer import Observable
 
 
 class SerialReader(Thread, Observable):
     '''
-    This class is responsible for reading from the serial port (UART/RS-232) and update log lines
-    to its registered observers.
+    This class is responsible for reading from the serial port and update log lines
+    to its registered observers. Quits if stop() is called.
     '''
-    NAME = 'SerialReader'
-    logger = logging.getLogger(NAME)
+    THREAD_NAME = 'SerialReader'
+    logger = logging.getLogger(THREAD_NAME)
 
-    def __init__(self, serial, do_timestamp = True, name = NAME):
+    def __init__(self, serial, callback, do_timestamp = True, name = THREAD_NAME):
         Thread.__init__(self, name = name)
         Observable.__init__(self)
         self.setDaemon(True)
@@ -24,6 +25,15 @@ class SerialReader(Thread, Observable):
         self._do_timestamp = do_timestamp
         self._port = serial
         self._start_time = None  # Is set when first log line arrives from serial port.
+        self._callback = callback
+
+    def __repr__(self):
+        return '{}({!r}, {!r}, {!r}, {!r}, {!r})'.format(self.__class__.__name__,
+                                                         self.getName(),
+                                                         self.is_alive(),
+                                                         self._do_timestamp,
+                                                         self._port,
+                                                         self._start_time)
 
     def time_stamp(self, line):
         """
@@ -39,18 +49,21 @@ class SerialReader(Thread, Observable):
         Stop reading from the serial port and commit suicide.
         """
         self._stop.set()
-        self.logger.debug('stop logging')
-        self.join()
+        self.logger.debug('stop reading from serial port')
+        if self.is_alive():
+            self.join()
+        self.logger.debug('reader has terminated')
 
     def run(self):
-        try:  # http://pyserial.readthedocs.io/en/latest/shortintro.html#readline
+        try:
             first_line_received = True
             i = 0
 
             self.logger.info('Start reading from serial port.')
             while not self._stop.is_set():
-                # we loop for every line to detect timeout, but also because it is convenient and idiomatic.
+                # we loop for every line and if no endline is found, then read timeout will occur.
                 line = self._port.readline().decode('ascii', 'backslashreplace')
+                sleep(0.1)  # let in other threads
                 if first_line_received:
                     self._start_time = datetime.now()
                     first_line_received = False
@@ -58,10 +71,11 @@ class SerialReader(Thread, Observable):
                     self.logger.debug('{}: {}'.format(i, line))
                     if self._do_timestamp:
                         line = self.time_stamp(line)
-                    self.notify(line)
+                    self.notify(line)  # update listeners
                     i += 1
-        except Exception as e:
+        except Exception as e:  # this may occur if readline fails handling an escape character
+                                # http://pyserial.readthedocs.io/en/latest/shortintro.html#readline
             self.logger.error('Error: {}'.format(e))
-            raise  # Raise error to caller.
+            self._callback('{} has stopped running. error: {}'.format(self.getName(), e))  # call back error
 
         self.logger.info('stopped reading from serial port.')
