@@ -1,7 +1,8 @@
 #!/usr/bin/env python
-
+import select
+import sys
 from sys import stdout
-from time import sleep
+from threading import Event
 import logging
 
 from observer import Observer
@@ -15,9 +16,12 @@ class SerialFileWriter(Observer):
     """
     logger = logging.getLogger('SerialFileWriter')
 
-    def __init__(self, log_file_path):
+    def __init__(self, log_file_path, callback):
         super(SerialFileWriter, self).__init__('SerialFileWriter')
-        self._file_writer = FileWriter(log_file_path)
+        self._file_writer = FileWriter(log_file_path, callback)
+
+    def __repr__(self):
+        return '{}({!r}'.format(self.__class__.__name__, self.name)
 
     def start(self):
         self._file_writer.start()
@@ -28,8 +32,9 @@ class SerialFileWriter(Observer):
 
     def update(self, data):
         log_line = data[0]  # data is a tuple
-        self.logger.debug('writing: {}'.format(log_line))
-        self._file_writer.put(log_line)  # log lines are written to file writer's queue
+        if self._file_writer.is_alive():
+            self.logger.debug('writing: {}'.format(log_line))
+            self._file_writer.put(log_line)  # log lines are written to file writer's queue
 
 
 class SerialPrinter(Observer):
@@ -39,6 +44,9 @@ class SerialPrinter(Observer):
     def __init__(self):
         super(SerialPrinter, self).__init__('SerialPrinter')
         self.logger = logging.getLogger(self.name)
+
+    def __repr__(self):
+        return '{}({!r}'.format(self.__class__.__name__, self.name)
 
     def update(self, new_data):
         log_line = new_data[0]  # new_data is a tuple
@@ -116,7 +124,7 @@ if __name__ == "__main__":
             :param port_name: The port name as a string
             :raises SerialException if port is not detected.
             '''
-            # This requires pyserial version > 2.6 that has a bugfix for not showing serial ports.
+            # This requires pyserial version > 2.6 that has a bug with showing serial ports.
             ports = [str(port).split('-')[0].strip() for port in list_ports.comports()]
             if port_name not in ports:
                 raise SerialException('Port {} not found. Check spelling of port name.'
@@ -125,19 +133,42 @@ if __name__ == "__main__":
         check_port(port_name)
 
     with Serial(port = port_name, baudrate = 115200, timeout = 1) as serial_port:
-        reader = SerialReader(serial = serial_port)
+        stop = Event()
+
+        def error_handler(error_string):
+            root_logger.error('error: {}'.format(error_string))
+            stop.set()
+
+        reader = SerialReader(serial = serial_port, callback = error_handler)
         file_writer = None
-        FILE_NAME = 'serial_log.txt'
 
         if log_to_file:
-            file_writer = SerialFileWriter(FILE_NAME)
+            FILE_NAME = 'serial_log.txt'
+
+            def write_error_handler(error_string):
+                root_logger.error('error: {}'.format(error_string))
+                reader.detach(file_writer)
+                stop.set()
+
+            file_writer = SerialFileWriter(log_file_path = FILE_NAME, callback = error_handler)
             reader.attach(file_writer)
             file_writer.start()
         else:
             reader.attach(SerialPrinter())
 
         reader.start()
-        sleep(1)  # wait until log has been printed to console
+
+        check_input = [sys.stdin]
+        # A smaller timeout means more cpu usage
+        timeout = 0.1  # seconds
+
+        print('Stop by entering a key.')
+        while check_input and not stop.is_set():
+            ready = select.select(check_input, [], [], timeout)[0]
+            if ready:
+                root_logger.info('User stopped!')
+                stop.set()
+
         reader.stop()
         if file_writer:
             file_writer.stop()
