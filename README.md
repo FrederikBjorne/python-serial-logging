@@ -9,14 +9,14 @@ Run the CLI in your terminal for help instructions:
 $ python main.py -h
 ```
 
-For example writing to console and log file at the same time with debug printing:
+For example writing to console and log file from fake serial port at the same time with debug printing:
 ```console
 $ python main.py -d -f -p COM1 -l
 ```
 
 ## Prerequisites
 
-Works for both Python2.6+ or python3
+OBS! Works for both Python2.6+ only!
 Install [python](https://www.python.org/downloads/)
 
 Install [pySerial](https://github.com/pyserial/pyserial/blob/master/documentation/pyserial.rst)
