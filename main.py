@@ -116,7 +116,7 @@ if __name__ == "__main__":
             :param port_name: The port name as a string
             :raises SerialException if port is not detected.
             '''
-            # This requires pyserial version > 2.6 that has a bug with showing serial ports.
+            # This requires pyserial version > 2.6 that has a bugfix for not showing serial ports.
             ports = [str(port).split('-')[0].strip() for port in list_ports.comports()]
             if port_name not in ports:
                 raise SerialException('Port {} not found. Check spelling of port name.'
