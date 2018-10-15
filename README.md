@@ -25,5 +25,5 @@ Install [pySerial](https://github.com/pyserial/pyserial/blob/master/documentatio
 
 Get [python-observer](https://github.com/FrederikBjorne/python-observer) package by issuing the following command:
 ```console
-$ pip install git+https://github.com/FrederikBjorne/python-observer.git
+$ pip install git+https://github.com/FrederikBjorne/python-observer
 ```
