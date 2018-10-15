@@ -23,7 +23,4 @@ Install [python](https://www.python.org/downloads/)
 
 Install [pySerial](https://github.com/pyserial/pyserial/blob/master/documentation/pyserial.rst)
 
-Get [python-observer](https://github.com/FrederikBjorne/python-observer) package by issuing the following command:
-```console
-$ pip install git+https://github.com/FrederikBjorne/python-observer
-```
+Install [python-observer](https://github.com/FrederikBjorne/python-observer) package.
