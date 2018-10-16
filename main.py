@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import select
-import sys
+from sys import platform
 from sys import stdout
 from threading import Event
 from cStringIO import StringIO
@@ -98,6 +98,25 @@ def check_port(port_name):
                               .format(port_name))
 
 
+def wait_for_any_key_to_quit():
+    root_logger.info('Stop by entering a key.')
+    if platform.startswith('win32'):  # on windows machines
+        from msvcrt import kbhit, getch
+        while True:
+            if kbhit():
+                return getch()
+    else:  # on any unix machine
+        import sys, tty, termios
+        fd = sys.stdin.fileno()
+        old_settings = termios.tcgetattr(fd)
+        try:
+            tty.setraw(sys.stdin.fileno())
+            ch = sys.stdin.read(1)  # wait for any one key input
+        finally:
+            termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+        return ch
+
+
 if __name__ == "__main__":
     import argparse
     from os.path import basename
@@ -150,9 +169,8 @@ if __name__ == "__main__":
             FILE_NAME = 'serial_log.txt'
 
             def write_error_handler(error_string):
-                root_logger.error('error: {}'.format(error_string))
                 reader.detach(file_writer)
-                stop.set()
+                error_handler(error_string)
 
             file_writer = SerialFileWriter(log_file_path = FILE_NAME, callback = error_handler)
             reader.attach(file_writer)
@@ -162,15 +180,7 @@ if __name__ == "__main__":
 
         reader.start()
 
-        check_input = [sys.stdin]
-        timeout = 0.1  # seconds. A smaller timeout means more cpu usage
-
-        root_logger.info('Stop by entering a key.')
-        while check_input and not stop.is_set():  # polls user key input for any key press
-            ready_reading = select.select(check_input, [], [], timeout)[0]
-            if ready_reading:  # If key is intercepted, we stop program
-                root_logger.info('User stopped!')
-                stop.set()
+        wait_for_any_key_to_quit()
 
         # tear down serial reader and file writer threads before exiting
         reader.stop()
