@@ -140,7 +140,7 @@ if __name__ == "__main__":
                 reader.detach(file_writer)
                 error_handler(error_string)
 
-            file_writer = SerialFileWriter(log_file_path = FILE_NAME, callback = error_handler)
+            file_writer = SerialFileWriter(log_file_path = FILE_NAME, callback = write_error_handler)
             reader.attach(file_writer)
             file_writer.start()
         else:
