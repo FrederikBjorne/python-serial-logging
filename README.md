@@ -1,10 +1,11 @@
 # A Python Serial logger implementation using observer pattern
-The file main.py show cases using observer pattern (py-observer package) to read from a serial port
-(real or fake) and provides a CLI for logging to console or/and file by offering different options.
-The serial reader- and file writer threads uses callbacks for communicating with the application
-when they have failed. The program waits for the user to enter a any key to quit the program.
+The file main.py show cases an application using observer pattern (python-observer package) to
+read from a serial port (real or fake) and provides a CLI for logging to console or/and file by offering
+different options. Using python-observer package, renders a de-coupled and cohesive design that is very
+flexible and easy to maintain.
 
-In addition, this application show cases a de-coupled and cohesive design that is very flexible.
+The serial reader- and file writer threads uses callbacks for communicating with the application
+if they fail. The program waits for the user to enter a any key to quit the program.
 
 Run the CLI in your terminal for help instructions:
 ```console
