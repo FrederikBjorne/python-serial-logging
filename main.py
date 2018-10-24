@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import select
+
 from sys import platform
 from sys import stdout
 from threading import Event
@@ -95,14 +95,14 @@ if __name__ == "__main__":
                                      formatter_class=argparse.RawDescriptionHelpFormatter,
                                      epilog=('Example of use:\n'
                                              '  {0} -d -p COM1\n'
-                                             '  {0}-f -p COM1\n').format(prog))
+                                             '  {0} -f -p COM1\n').format(prog))
     parser.add_argument('-d', '--debug', default=False, help='Set debug log level', action='store_true')
-    parser.add_argument('-l', '--logfile', default=False, help='Set log to file', action='store_true')
+    parser.add_argument('-l', '--logfile', type = str, help='Set log to file')
     parser.add_argument('-f', '--fake', default=False, help='Set fake serial', action='store_true')
     parser.add_argument('-p', '--port', type = str, required = True, help = 'Name of serial port')
     args = parser.parse_args()
 
-    debug_print, log_to_file, fake_serial, port_name = args.debug, args.logfile, args.fake, args.port
+    debug_print, log_file, fake_serial, port_name = args.debug, args.logfile, args.fake, args.port
 
     console_handler = logging.StreamHandler(stdout)
     console_handler.setFormatter(logging.Formatter('%(asctime)s %(name)-18s %(levelname)-8s %(message)s'))
@@ -133,14 +133,12 @@ if __name__ == "__main__":
         reader = SerialReader(serial = serial_port, callback = error_handler)
         file_writer = None
 
-        if log_to_file:
-            FILE_NAME = 'serial_log.txt'
-
+        if log_file:
             def write_error_handler(error_string):
                 reader.detach(file_writer)
                 error_handler(error_string)
 
-            file_writer = SerialFileWriter(log_file_path = FILE_NAME, callback = write_error_handler)
+            file_writer = SerialFileWriter(log_file_path = log_file, callback = write_error_handler)
             reader.attach(file_writer)
             file_writer.start()
         else:

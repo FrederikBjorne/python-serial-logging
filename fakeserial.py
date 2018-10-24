@@ -189,4 +189,4 @@ FAKE_LOG = StringIO(r"""
 (00:08.664536) [10440] lk boot mode = 0
 (00:08.664536) [10440] lk boot reason = power_key
 (00:08.664536) [10440] lk finished --> jump to linux kernel 64Bit
-    """)
+""")

@@ -38,9 +38,9 @@ class FileWriter(Thread):
         self.setDaemon(True)
         self._log_line_queue = Queue()
         self._stop = Event()
-        codecs.register_error('backslashreplace', self.backslash_replace)
         self.logger = logging.getLogger(self.THREAD_NAME)
         self._callback = callback
+        codecs.register_error('backslashreplace', self.backslash_replace)
 
     def __repr__(self):
         return '{}({!r}, {!r}, {!r}, {!r})'.format(self.__class__.__name__,
@@ -69,7 +69,7 @@ class FileWriter(Thread):
     @staticmethod
     def backslash_replace(error):
         """
-        An error handler to be called when escape characters are read from the log line queue input.
+        An error handler to be called if escape characters are read from the log line queue input.
         """
         return u"".join([u"\\x{:x}".format(ord(error.object[i]))
                          for i in range(error.start, error.end)]), error.end
@@ -86,7 +86,7 @@ class FileWriter(Thread):
                         continue
                     else:
                         self._log_line_queue.task_done()
-                        log_file.write(str(log_line) + '\n')
+                        log_file.write(log_line + '\n')
         except Exception as e:  # this may occur if codecs fails somehow
             self.logger.error('Error: {}'.format(e))
             self._callback('{} has stopped running. error: {}'.format(self.getName(), str(e)))  # call back error

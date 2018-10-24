@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-
+import codecs
 import logging
 from datetime import datetime
 from threading import Thread, Event
@@ -32,6 +32,15 @@ class SerialReader(Thread, Observable):
         self._port = serial
         self._start_time = None  # Is set when first log line arrives from serial port.
         self._callback = callback
+        codecs.register_error('backslashreplace', self.backslash_replace)
+
+    @staticmethod
+    def backslash_replace(error):
+        """
+        An error handler to be called when escape characters are read from the log line queue input.
+        """
+        return u"".join([u"\\x{:x}".format(ord(error.object[i]))
+                         for i in range(error.start, error.end)]), error.end
 
     def __repr__(self):
         return '{}({!r}, {!r}, {!r}, {!r}, {!r})'.format(self.__class__.__name__,
@@ -69,13 +78,13 @@ class SerialReader(Thread, Observable):
             while not self._stop.is_set():
                 # we loop for every line and if no endline is found, then read timeout will occur.
 
-                line = self._port.readline().decode('ascii', 'backslashreplace')
+                line = self._port.readline().decode('ascii', 'backslashreplace').strip()
                 sleep(0.1)  # let in other threads
                 if first_line_received:
                     self._start_time = datetime.now()
                     first_line_received = False
                 if line:
-                    self.logger.debug('{}: {}'.format(i, line))
+                    #self.logger.debug('{}: {}'.format(i, line))
                     if self._do_timestamp:
                         line = self.time_stamp(line)
                     self.notify(line)  # update listeners
