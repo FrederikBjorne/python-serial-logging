@@ -84,7 +84,7 @@ class SerialReader(Thread, Observable):
                     self._start_time = datetime.now()
                     first_line_received = False
                 if line:
-                    #self.logger.debug('{}: {}'.format(i, line))
+                    self.logger.debug('{}: {}'.format(i, line))
                     if self._do_timestamp:
                         line = self.time_stamp(line)
                     self.notify(line)  # update listeners

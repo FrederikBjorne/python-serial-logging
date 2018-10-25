@@ -50,7 +50,7 @@ class SerialPrinter(Observer):
 
     def update(self, new_data):
         log_line = new_data[0]  # new_data is a tuple
-        self.logger.debug('printing {}'.format(log_line))
+        print('{}\r'.format(log_line))
 
 
 def check_port(port_name):
@@ -105,7 +105,7 @@ if __name__ == "__main__":
     debug_print, log_file, fake_serial, port_name = args.debug, args.logfile, args.fake, args.port
 
     console_handler = logging.StreamHandler(stdout)
-    console_handler.setFormatter(logging.Formatter('%(asctime)s %(name)-18s %(levelname)-8s %(message)s'))
+    console_handler.setFormatter(logging.Formatter('%(asctime)s %(name)-18s %(levelname)-8s %(message)s\r'))
 
     # Add the console handler to the root logger for default
     root_logger = logging.getLogger()
@@ -141,8 +141,8 @@ if __name__ == "__main__":
             file_writer = SerialFileWriter(log_file_path = log_file, callback = write_error_handler)
             reader.attach(file_writer)
             file_writer.start()
-        else:
-            reader.attach(SerialPrinter())
+
+        reader.attach(SerialPrinter())  # printing to console is always on
 
         reader.start()
 
