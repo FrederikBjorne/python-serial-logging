@@ -3,7 +3,7 @@
 import logging
 
 from threading import Thread, Event
-from Queue import Queue, Empty
+from Queue import Queue, Empty as QueueEmpty
 import codecs
 
 
@@ -82,7 +82,7 @@ class FileWriter(Thread):
                 while not self._stop.is_set():
                     try:  # timeout avoids blocking in order to be responsive to stop calls
                         log_line = self._log_line_queue.get(timeout=self._read_queue_timeout)
-                    except Empty:
+                    except QueueEmpty:
                         continue
                     else:
                         self._log_line_queue.task_done()
