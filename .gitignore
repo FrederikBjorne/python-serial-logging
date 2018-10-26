@@ -6,5 +6,5 @@
 
 docs/index.md
 site/
-.txt
+*.txt
 /.idea/*
