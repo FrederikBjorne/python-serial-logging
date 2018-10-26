@@ -6,6 +6,8 @@ from threading import Event
 import logging
 
 from observer import Observer
+
+from serialporthelper import SerialPortHelper
 from serialreader import SerialReader
 from filewriter import FileWriter
 
@@ -53,19 +55,6 @@ class SerialPrinter(Observer):
         print('{}\r'.format(log_line))
 
 
-def check_port(port_name):
-    """
-    Checks that the serial port is available.
-    :param port_name: The port name as a string
-    :raises SerialException if port is not detected.
-    """
-    # This requires pyserial version > 2.6 that has a bug with showing serial ports.
-    ports = [str(port).split('-')[0].strip() for port in list_ports.comports()]
-    if port_name not in ports:
-        raise SerialException('Port {} not found. Check spelling of port name.'
-                              .format(port_name))
-
-
 def wait_for_any_key_to_quit():
     root_logger.info('Stop by entering a key.')
     if platform.startswith('win32'):  # on windows machines
@@ -106,8 +95,7 @@ if __name__ == "__main__":
     parser.add_argument('-l', '--logfile', type=str, help='set log to file')
     parser.add_argument('-f', '--fake', default=False, help='set fake serial', action='store_true')
     parser.add_argument('-p', '--port', type=str, required = True, help = 'set serial port')
-    parser.add_argument('-t', '--timestamp', default=False, help='add timestamp in logging',
-                        action='store_true')
+    parser.add_argument('-t', '--timestamp', default=False, help='add timestamp in logging', action='store_true')
     args = parser.parse_args()
 
     (debug_print,
@@ -130,10 +118,7 @@ if __name__ == "__main__":
         Serial.prepare(fake_serial_data = FAKE_LOG)
     else:
         from serial import Serial
-        from serial.tools import list_ports
-        from serial.serialutil import SerialException
-
-        check_port(port_name)
+        SerialPortHelper.check_port(port_name)
 
     with Serial(port = port_name, baudrate = 115200, timeout = 1) as serial_port:
         stop = Event()

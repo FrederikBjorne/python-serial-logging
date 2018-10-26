@@ -36,6 +36,22 @@ For example writing to console and log file from fake serial port at the same ti
 $ python main.py -p COM1 -f -l serial.txt
 ```
 
+### List ports
+Run another CLI in your terminal for help instructions:
+```console
+$ python serialporthelper.py -h
+usage: 
+  serialporthelper.py -l
+  serialporthelper.py -p COM1
+
+List serial ports CLI
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -l, --listports       list serial ports
+  -p PORT, --port PORT  check if a port is available
+```
+
 ## Prerequisites
 
 OBS! Works for Python2.6+ only!
@@ -44,3 +60,8 @@ Install [python](https://www.python.org/downloads/)
 Install [pySerial](https://github.com/pyserial/pyserial/blob/master/documentation/pyserial.rst)
 
 Install [python-observer](https://github.com/FrederikBjorne/python-observer) package.
+
+## Limitations
+The CLI program currently only works for serial ports over usb, since it does not provide
+any port configuration. However, you may always change the call to Serial to whatever your
+special settings you might need.
