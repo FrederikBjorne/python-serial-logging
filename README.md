@@ -10,11 +10,26 @@ if they fail. The program waits for the user to enter a any key to quit the prog
 Run the CLI in your terminal for help instructions:
 ```console
 $ python main.py -h
+usage: main.py [-h] [-d] [-l LOGFILE] [-f] -p PORT
+
+SerialReader CLI
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -d, --debug           set debug log level
+  -l LOGFILE, --logfile LOGFILE
+                        set log to file
+  -f, --fake            set fake serial
+  -p PORT, --port PORT  set serial port
+
+Example of use:
+  main.py -d -p COM1
+  main.py -p COM1 -f -l serial.txt
 ```
 
 For example writing to console and log file from fake serial port at the same time with debug printing:
 ```console
-$ python main.py -f -p COM1 -l -d
+$ python main.py -p COM1 -f -l serial.txt
 ```
 
 ## Prerequisites

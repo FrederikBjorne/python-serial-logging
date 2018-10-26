@@ -95,11 +95,11 @@ if __name__ == "__main__":
                                      formatter_class=argparse.RawDescriptionHelpFormatter,
                                      epilog=('Example of use:\n'
                                              '  {0} -d -p COM1\n'
-                                             '  {0} -f -p COM1\n').format(prog))
-    parser.add_argument('-d', '--debug', default=False, help='Set debug log level', action='store_true')
-    parser.add_argument('-l', '--logfile', type = str, help='Set log to file')
-    parser.add_argument('-f', '--fake', default=False, help='Set fake serial', action='store_true')
-    parser.add_argument('-p', '--port', type = str, required = True, help = 'Name of serial port')
+                                             '  {0} -p COM1 -f -l serial.txt\n').format(prog))
+    parser.add_argument('-d', '--debug', default=False, help='set debug log level', action='store_true')
+    parser.add_argument('-l', '--logfile', type = str, help='set log to file')
+    parser.add_argument('-f', '--fake', default=False, help='set fake serial', action='store_true')
+    parser.add_argument('-p', '--port', type = str, required = True, help = 'set serial port')
     args = parser.parse_args()
 
     debug_print, log_file, fake_serial, port_name = args.debug, args.logfile, args.fake, args.port
