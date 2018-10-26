@@ -10,9 +10,16 @@ if they fail. The program waits for the user to enter a any key to quit the prog
 Run the CLI in your terminal for help instructions:
 ```console
 $ python main.py -h
-usage: main.py [-h] [-d] [-l LOGFILE] [-f] -p PORT
+usage: 
+  main.py -p COM1
+  main.py -p COM1 -f -l serial.txt
 
-SerialReader CLI
+Serial Logger CLI
+
+You log from a serial port set by name. The serial stream is logged to
+console. Writing the stream to a file is an option. A fake serial stream
+is an option too and typically useful for development or unit testing
+with fault-injection. Hit any key to quit the program.
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -21,10 +28,6 @@ optional arguments:
                         set log to file
   -f, --fake            set fake serial
   -p PORT, --port PORT  set serial port
-
-Example of use:
-  main.py -d -p COM1
-  main.py -p COM1 -f -l serial.txt
 ```
 
 For example writing to console and log file from fake serial port at the same time with debug printing:
