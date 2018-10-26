@@ -106,9 +106,15 @@ if __name__ == "__main__":
     parser.add_argument('-l', '--logfile', type=str, help='set log to file')
     parser.add_argument('-f', '--fake', default=False, help='set fake serial', action='store_true')
     parser.add_argument('-p', '--port', type=str, required = True, help = 'set serial port')
+    parser.add_argument('-t', '--timestamp', default=False, help='add timestamp in logging',
+                        action='store_true')
     args = parser.parse_args()
 
-    debug_print, log_file, fake_serial, port_name = args.debug, args.logfile, args.fake, args.port
+    (debug_print,
+     log_file,
+     fake_serial,
+     port_name,
+     timestamp) = args.debug, args.logfile, args.fake, args.port, args.timestamp
 
     console_handler = logging.StreamHandler(stdout)
     console_handler.setFormatter(logging.Formatter('%(asctime)s %(name)-18s %(levelname)-8s %(message)s\r'))
@@ -136,7 +142,7 @@ if __name__ == "__main__":
             root_logger.error('error: {}'.format(error_string))
             stop.set()
 
-        reader = SerialReader(serial = serial_port, callback = error_handler)
+        reader = SerialReader(serial = serial_port, callback = error_handler, do_timestamp = timestamp)
         file_writer = None
 
         if log_file:

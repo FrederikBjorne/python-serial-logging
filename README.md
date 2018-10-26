@@ -12,7 +12,7 @@ Run the CLI in your terminal for help instructions:
 $ python main.py -h
 usage: 
   main.py -p COM1
-  main.py -p COM1 -f -l serial.txt
+  main.py -p COM1 -l serial.txt -t -f
 
 Serial Logger CLI
 
@@ -28,6 +28,7 @@ optional arguments:
                         set log to file
   -f, --fake            set fake serial
   -p PORT, --port PORT  set serial port
+  -t, --timestamp       add timestamp in logging
 ```
 
 For example writing to console and log file from fake serial port at the same time with debug printing:
