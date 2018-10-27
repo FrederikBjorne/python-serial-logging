@@ -82,11 +82,11 @@ if __name__ == "__main__":
     prog = basename(__file__)
     parser = argparse.ArgumentParser(description=('Serial Logger CLI\n\n'
                                                   'You log from a serial port set by name. '
-                                                  'The serial stream is logged to\nconsole. '
-                                                  'Writing the stream to a file is an option. '
+                                                  'The serial stream is logged toconsole.\n'
+                                                  'Writing the stream to a file is an option.\n'
                                                   'A fake serial stream\nis an option too and '
                                                   'typically useful for development or '
-                                                  'unit testing\nwith fault-injection. '
+                                                  'unit testing\nwith fault-injection.\n'
                                                   'Hit any key to quit the program.\n'),
                                      usage = ('\n  %(prog)s -p COM1\n'
                                               '  %(prog)s -p COM1 -f -l serial.txt\n').format(prog),
