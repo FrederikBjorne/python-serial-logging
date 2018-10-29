@@ -2,7 +2,6 @@
 
 from sys import platform
 from sys import stdout
-from threading import Event
 import logging
 
 from observer import Observer
@@ -29,6 +28,9 @@ class SerialFileWriter(Observer):
 
     def stop(self):
         self._file_writer.stop()
+
+    def is_alive(self):
+        return self._file_writer.is_alive()
 
     def update(self, data):
         log_line = data[0]  # data is a tuple
@@ -124,25 +126,28 @@ if __name__ == "__main__":
             root_logger.error('error: {}'.format(error_string))
             root_logger.error('Program has failed operation, so hit any key to quit please!')
 
-        reader = SerialReader(serial = serial_port, callback = error_handler, do_timestamp = timestamp)
-        file_writer = None
+        file_writer, reader = None, None
+        try:
+            reader = SerialReader(serial = serial_port, callback = error_handler, do_timestamp = timestamp)
 
-        if log_file:
-            def write_error_handler(error_string):
-                reader.detach(file_writer)
-                error_handler(error_string)
+            if log_file:
+                def write_error_handler(error_string):
+                    reader.detach(file_writer)
+                    error_handler(error_string)
 
-            file_writer = SerialFileWriter(log_file_path = log_file, callback = write_error_handler)
-            reader.attach(file_writer)
-            file_writer.start()
+                file_writer = SerialFileWriter(log_file_path = log_file, callback = write_error_handler)
+                reader.attach(file_writer)
+                file_writer.start()
 
-        reader.attach(SerialPrinter())  # printing to console is always on
+            reader.attach(SerialPrinter())  # printing to console is always on
 
-        reader.start()
+            reader.start()
 
-        wait_for_any_key_to_quit()
+            wait_for_any_key_to_quit()
+        finally:
+            # tear down serial reader and file writer threads before exiting
+            if reader.is_alive():
+                reader.stop()
 
-        # tear down serial reader and file writer threads before exiting
-        reader.stop()
-        if file_writer:
-            file_writer.stop()
+            if file_writer.is_alive():
+                file_writer.stop()
