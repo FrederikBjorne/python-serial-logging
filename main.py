@@ -29,7 +29,6 @@ class SerialFileWriter(Observer):
 
     def stop(self):
         self._file_writer.stop()
-        self._file_writer.join()
 
     def update(self, data):
         log_line = data[0]  # data is a tuple
