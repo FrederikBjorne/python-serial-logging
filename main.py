@@ -113,7 +113,6 @@ if __name__ == "__main__":
 
     if fake_serial:
         from fakeserial import Serial, FAKE_LOG
-        port_name = None
         Serial.prepare(fake_serial_data = FAKE_LOG)
     else:
         from serial import Serial
@@ -121,12 +120,10 @@ if __name__ == "__main__":
 
     # Open the serial port specified by port name
     with Serial(port = port_name, baudrate = 115200, timeout = 1) as serial_port:
-        stop = Event()
 
         def error_handler(error_string):
             root_logger.error('error: {}'.format(error_string))
             root_logger.error('Program has failed operation, so hit any key to quit please!')
-            stop.set()
 
         reader = SerialReader(serial = serial_port, callback = error_handler, do_timestamp = timestamp)
         file_writer = None
