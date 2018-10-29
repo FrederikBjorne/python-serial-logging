@@ -10,7 +10,7 @@ from serial.serialutil import SerialBase, SerialException, portNotOpenError
 class Serial(SerialBase):
     """
        Fake Serial port implementation useful for development in cases you want to run tests
-       without hardware, but also for fault injection.
+       without hardware, but also for the purposes of fault injection in automatic tests.
     """
 
     _fake_serial_data = None

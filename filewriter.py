@@ -8,12 +8,14 @@ import codecs
 
 
 class FileWriter(Thread):
-    '''
+    """
     This thread reads log lines from a queue and writes these to a file passed as log_file_path.
     The log line queue is filled with new log lines by calling put().
-    Quits if stop() is called. Setting the read_queue_timer for reading the queue determine
-    the responsiveness to stop call and is optional.
-    '''
+    Thread quits if stop() is called. If an exception is raised when writing to file, this thread
+    will callback to its owner to stop operation.
+    Setting the read_queue_timer for reading the queue determine the responsiveness to stop call
+    and is optional.
+    """
     READ_NEW_LOGLINE_TMO = 0.5
     THREAD_NAME = 'FileWriter'
 
@@ -38,7 +40,7 @@ class FileWriter(Thread):
         self.setDaemon(True)
         self._log_line_queue = Queue()
         self._stop = Event()
-        self.logger = logging.getLogger(self.THREAD_NAME)
+        self.logger = logging.getLogger(name)
         self._callback = callback
         codecs.register_error('backslashreplace', self.backslash_replace)
 

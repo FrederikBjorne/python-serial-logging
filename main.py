@@ -6,7 +6,6 @@ from threading import Event
 import logging
 
 from observer import Observer
-
 from serialporthelper import SerialPortHelper
 from serialreader import SerialReader
 from filewriter import FileWriter
@@ -23,7 +22,7 @@ class SerialFileWriter(Observer):
         self._file_writer = FileWriter(log_file_path, callback)
 
     def __repr__(self):
-        return '{}({!r}'.format(self.__class__.__name__, self.name)
+        return '{}({!r})'.format(self.__class__.__name__, self.name)
 
     def start(self):
         self._file_writer.start()
@@ -48,7 +47,7 @@ class SerialPrinter(Observer):
         self.logger = logging.getLogger(self.name)
 
     def __repr__(self):
-        return '{}({!r}'.format(self.__class__.__name__, self.name)
+        return '{}({!r})'.format(self.__class__.__name__, self.name)
 
     def update(self, new_data):
         log_line = new_data[0]  # new_data is a tuple
@@ -62,7 +61,7 @@ def wait_for_any_key_to_quit():
         while True:
             if kbhit():
                 return getch()
-    else:  # on any unix machine
+    else:  # on any unix machine including mac osx
         import sys, tty, termios
         fd = sys.stdin.fileno()
         old_settings = termios.tcgetattr(fd)
@@ -120,11 +119,13 @@ if __name__ == "__main__":
         from serial import Serial
         SerialPortHelper.check_port(port_name)
 
+    # Open the serial port specified by port name
     with Serial(port = port_name, baudrate = 115200, timeout = 1) as serial_port:
         stop = Event()
 
         def error_handler(error_string):
             root_logger.error('error: {}'.format(error_string))
+            root_logger.error('Program has failed operation, so hit any key to quit please!')
             stop.set()
 
         reader = SerialReader(serial = serial_port, callback = error_handler, do_timestamp = timestamp)
