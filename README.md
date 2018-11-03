@@ -1,8 +1,9 @@
 # A Python Serial logger implementation and serial port CLI using observer pattern
-The file main.py show cases an application using observer pattern (python-observer package) to
+The file main.py show cases an application using observer pattern [py-observer](https://github.com/FrederikBjorne/python-observer) package to
 read from a serial port (real or fake) and provides a CLI for logging to console (always on) and
-file by offering different options. Using python-observer package, renders a de-coupled and
-cohesive design that is very flexible and easy to maintain.
+file by offering different options. In addition, the overall design is an example of sustainable
+design following the [SOLID principles](https://en.wikipedia.org/wiki/SOLID) popularized by uncle Bob aiming to provide
+an flexible design easy to maintain.
 
 The serial reader- and file writer threads uses callbacks for communicating with the application
 if they fail. The program waits for the user to enter any key to quit the program.
@@ -57,9 +58,9 @@ optional arguments:
 OBS! Works for Python2.6+ only!
 Install [python](https://www.python.org/downloads/)
 
-Install [pySerial](https://github.com/pyserial/pyserial/blob/master/documentation/pyserial.rst)
+Install [pySerial](https://github.com/pyserial/pyserial)
 
-Install [python-observer](https://github.com/FrederikBjorne/python-observer) package.
+Install [py-observer](https://github.com/FrederikBjorne/python-observer) package.
 
 ## Limitations
 The serial logger CLI program currently only works for serial ports over usb, since it does not provide
