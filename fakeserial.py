@@ -2,7 +2,7 @@
 from __future__ import print_function  # Remove when stepping up to python 3
 
 import logging
-from StringIO import StringIO
+from cStringIO import StringIO, InputType as StringIType
 
 from serial.serialutil import SerialBase, SerialException, portNotOpenError
 
@@ -17,14 +17,15 @@ class Serial(SerialBase):
     logger = logging.getLogger('FakeSerial')
 
     @classmethod
-    def prepare(cls, fake_serial_data=None):
+    def prepare(cls, fake_serial_stream):
         """
         Only for injecting fake I/O text data for testing purposes.
-        :param fake_serial_data: Fake serial logging data for testing purposes.
-        :type cStringIO.StringIO
+        :param fake_serial_stream: Fake serial logging data for testing purposes.
+        :type cStringIO.cStringIO
         """
-
-        Serial._fake_serial_data = fake_serial_data
+        if not isinstance(fake_serial_stream, StringIType):
+            raise TypeError('fake_serial_stream needs to be of type cStringIO!')
+        Serial._fake_serial_data = fake_serial_stream
 
     def read(self, size=1):
         """Read size bytes from the serial port. If a timeout is set it may

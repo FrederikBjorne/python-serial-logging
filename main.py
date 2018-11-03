@@ -114,7 +114,7 @@ if __name__ == "__main__":
 
     if fake_serial:
         from fakeserial import Serial, FAKE_LOG
-        Serial.prepare(fake_serial_data = FAKE_LOG)
+        Serial.prepare(fake_serial_stream = FAKE_LOG)
     else:
         from serial import Serial
         SerialPortHelper.check_port(port_name)
@@ -149,5 +149,5 @@ if __name__ == "__main__":
             if reader.is_alive():
                 reader.stop()
 
-            if file_writer.is_alive():
+            if file_writer and file_writer.is_alive():
                 file_writer.stop()
