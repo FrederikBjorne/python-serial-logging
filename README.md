@@ -11,15 +11,15 @@ if they fail. The program waits for the user to enter any key to quit the progra
 Run the serial logger CLI in your terminal for help instructions:
 ```console
 $ python main.py -h
-usage: 
-  main.py -p COM1
-  main.py -p COM1 -l serial.txt -t -f
+usage: main.py [-h] [-d] [-l LOGFILE] [-f] -p PORT [-t]
 
 Serial Logger CLI
 
 You log from a serial port set by name. The serial stream is logged to console.
-Writing the stream to a file is an option. A fake serial stream is an option
-too and typically useful for development or unit testing with fault-injection.
+Writing the stream to a file is an option.
+A fake serial stream is an option too and typically useful for development or
+unit testing
+with fault-injection.
 Hit any key to quit the program.
 
 optional arguments:
@@ -30,6 +30,9 @@ optional arguments:
   -f, --fake            set fake serial
   -p PORT, --port PORT  set serial port
   -t, --timestamp       add timestamp in logging
+
+  main.py -p COM1
+  main.py -p COM1 -f -l serial.txt
 ```
 
 For example writing to console and log file from fake serial port at the same time with debug printing:
@@ -41,9 +44,7 @@ $ python main.py -p COM1 -f -l serial.txt
 Run the serial port helper CLI in your terminal for help instructions:
 ```console
 $ python serialporthelper.py -h
-usage: 
-  serialporthelper.py -l
-  serialporthelper.py -p COM1
+usage: serialporthelper.py [-h] [-l | -p PORT]
 
 List serial ports CLI
 
@@ -51,6 +52,9 @@ optional arguments:
   -h, --help            show this help message and exit
   -l, --listports       list serial ports
   -p PORT, --port PORT  check if a port is available
+
+  serialporthelper.py -l
+  serialporthelper.py -p COM1
 ```
 
 ## Prerequisites
@@ -58,9 +62,15 @@ optional arguments:
 OBS! Works for Python2.6+ only!
 Install [python](https://www.python.org/downloads/)
 
+### Dependencies
 Install [pySerial](https://github.com/pyserial/pyserial)
 
 Install [py-observer](https://github.com/FrederikBjorne/python-observer) package.
+
+Install these using the requirement.txt file:
+```console
+$ pip install -r requirements.txt
+```
 
 ## Limitations
 The serial logger CLI program currently only works for serial ports over usb, since it does not provide

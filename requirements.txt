@@ -1,0 +1,2 @@
+pyserial==0.0.67
+git+https://github.com/FrederikBjorne/python-observer
