@@ -36,10 +36,11 @@ if __name__ == "__main__":
     from os.path import basename
 
     # CLI
-    prog = basename(__file__)
+    program_name = basename(__file__)
     parser = argparse.ArgumentParser(description=('List serial ports CLI\n\n'),
-                                     usage = ('\n  %(prog)s -l\n'
-                                              '  %(prog)s -p COM1\n').format(prog),
+                                     prog = program_name,
+                                     epilog = ('\n  %(prog)s -l\n'
+                                               '  %(prog)s -p COM1\n'),
                                      formatter_class=argparse.RawDescriptionHelpFormatter)
     group = parser.add_mutually_exclusive_group()
     group.add_argument('-l', '--listports', help='list serial ports', action='store_true')

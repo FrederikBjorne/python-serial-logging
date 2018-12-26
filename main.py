@@ -79,17 +79,18 @@ if __name__ == "__main__":
     from os.path import basename
 
     # CLI
-    prog = basename(__file__)
+    program_name = basename(__file__)
     parser = argparse.ArgumentParser(description=('Serial Logger CLI\n\n'
                                                   'You log from a serial port set by name. '
-                                                  'The serial stream is logged toconsole.\n'
+                                                  'The serial stream is logged to console.\n'
                                                   'Writing the stream to a file is an option.\n'
-                                                  'A fake serial stream\nis an option too and '
-                                                  'typically useful for development or '
-                                                  'unit testing\nwith fault-injection.\n'
+                                                  'A fake serial stream is an option too and '
+                                                  'typically useful for development or\n'
+                                                  'unit testing with fault-injection.\n'
                                                   'Hit any key to quit the program.\n'),
-                                     usage = ('\n  %(prog)s -p COM1\n'
-                                              '  %(prog)s -p COM1 -f -l serial.txt\n').format(prog),
+                                     prog = program_name,
+                                     epilog = ('\n  %(prog)s -p COM1\n'
+                                               '  %(prog)s -p COM1 -f -l serial.txt\n'),
                                      formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument('-d', '--debug', default=False, help='set debug log level', action='store_true')
     parser.add_argument('-l', '--logfile', type=str, help='set log to file')
