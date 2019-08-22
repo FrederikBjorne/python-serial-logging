@@ -14,7 +14,7 @@ class Serial(SerialBase):
     """
 
     _fake_serial_data = None
-    logger = logging.getLogger('FakeSerial')
+    logger = logging.getLogger(self.__class__.__name__)
 
     @classmethod
     def prepare(cls, fake_serial_stream):
