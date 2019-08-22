@@ -17,13 +17,12 @@ class FileWriter(Thread):
     and is optional.
     """
     READ_NEW_LOGLINE_TMO = 0.5
-    THREAD_NAME = 'FileWriter'
 
     def __init__(self,
                  log_file_path,
                  callback,
                  read_queue_timeout=READ_NEW_LOGLINE_TMO,
-                 name=THREAD_NAME,
+                 name=self.__class__.__name__,
                  encoding='utf8'):
         """
         :param log_file_path: The file path to write log lines to.
