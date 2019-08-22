@@ -14,7 +14,7 @@ class Serial(SerialBase):
     """
 
     _fake_serial_data = None
-    logger = logging.getLogger(self.__class__.__name__)
+    logger = None
 
     @classmethod
     def prepare(cls, fake_serial_stream):
@@ -26,6 +26,7 @@ class Serial(SerialBase):
         if not isinstance(fake_serial_stream, StringIType):
             raise TypeError('fake_serial_stream needs to be of type cStringIO!')
         Serial._fake_serial_data = fake_serial_stream
+        cls.logger = logging.getLogger(cls.__class__.__name__)
 
     def read(self, size=1):
         """Read size bytes from the serial port. If a timeout is set it may
@@ -54,7 +55,6 @@ class Serial(SerialBase):
     def open(self):
         """Open port with current settings. This may throw a SerialException
            if the port cannot be opened."""
-        self.logger = None
         if self._port is None:
             raise SerialException("Port must be configured before it can be used.")
         # not that there anything to configure...
@@ -70,8 +70,7 @@ class Serial(SerialBase):
     def _reconfigurePort(self):
         """Set communication parameters on opened port. for the test://
         protocol all settings are ignored!"""
-        if self.logger:
-            self.logger.info('ignored port configuration change')
+        self.logger.info('ignored port configuration change')
 
     def makeDeviceName(self, port):
         raise SerialException("there is no sensible way to turn numbers into URLs")
