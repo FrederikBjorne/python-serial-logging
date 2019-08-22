@@ -15,10 +15,8 @@ class SerialReader(Thread, Observable):
     reading from serial due to I/O issues or escape characters received, this thread will
     callback to its owner to stop operation. Each log line is timestamped as default.
     """
-    THREAD_NAME = 'SerialReader'
-    logger = logging.getLogger(THREAD_NAME)
 
-    def __init__(self, serial, callback, do_timestamp = True, name = THREAD_NAME):
+    def __init__(self, serial, callback, do_timestamp = True, name = self.__class__.__name__):
         """
         :param serial: A Serial object for communicating with a serial port. It needs to have
                        a read timeout set. Otherwise, this class object might hang forever if
@@ -36,6 +34,7 @@ class SerialReader(Thread, Observable):
         self._stop = Event()
         self._do_timestamp = do_timestamp
         self._port = serial
+        self.logger = logging.getLogger(name)
         self._start_time = None  # Is set when first log line arrives from serial port.
         self._callback = callback
         codecs.register_error('backslashreplace', self.backslash_replace)
