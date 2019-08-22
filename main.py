@@ -17,7 +17,7 @@ class SerialFileWriter(Observer):
     logger = logging.getLogger(self.__class__.__name__)
 
     def __init__(self, log_file_path, callback):
-        super(SerialFileWriter, self).__init__('SerialFileWriter')
+        super(SerialFileWriter, self).__init__(self.__class__.__name__)
         self._file_writer = FileWriter(log_file_path, callback)
 
     def __repr__(self):
@@ -44,7 +44,7 @@ class SerialPrinter(Observer):
     Simply intercepts logs and prints these to the console.
     """
     def __init__(self):
-        super(SerialPrinter, self).__init__('SerialPrinter')
+        super(SerialPrinter, self).__init__(self.__class__.__name__)
         self.logger = logging.getLogger(self.name)
 
     def __repr__(self):
