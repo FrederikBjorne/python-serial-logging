@@ -55,7 +55,7 @@ class SerialPrinter(Observer):
         print('{}\r'.format(log_line))
 
 
-def wait_for_any_key_to_quit():
+def check_for_any_key_to_quit():
     root_logger.info('Stop by entering a key.')
     if platform.startswith('win32'):  # on windows machines
         from msvcrt import kbhit, getch
@@ -144,7 +144,7 @@ if __name__ == "__main__":
 
             reader.start()
 
-            wait_for_any_key_to_quit()
+            check_for_any_key_to_quit()
         finally:
             # tear down serial reader and file writer threads before exiting
             if reader.is_alive():
