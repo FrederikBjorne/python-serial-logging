@@ -14,7 +14,7 @@ class SerialFileWriter(Observer):
     """
     This class intercepts logs and writes these to its own file writer.
     """
-    logger = logging.getLogger('SerialFileWriter')
+    logger = logging.getLogger(self.__class__.__name__)
 
     def __init__(self, log_file_path, callback):
         super(SerialFileWriter, self).__init__('SerialFileWriter')
