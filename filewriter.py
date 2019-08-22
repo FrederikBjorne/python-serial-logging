@@ -22,16 +22,14 @@ class FileWriter(Thread):
                  log_file_path,
                  callback,
                  read_queue_timeout=READ_NEW_LOGLINE_TMO,
-                 name=self.__class__.__name__,
                  encoding='utf8'):
         """
         :param log_file_path: The file path to write log lines to.
         :param callback: A callback method for calling back to application when error occurs.
         :param read_queue_timeout: The read timeout to avoid blocking.
-        :param name: The thread name.
         :param encoding: The encoding format when writing to file.
         """
-        super(FileWriter, self).__init__(name = name)
+        super(FileWriter, self).__init__(name = self.__class__.__name__)
         self._read_queue_timeout = read_queue_timeout
         self._log_file_path = log_file_path
         self._encoding = encoding
@@ -39,7 +37,7 @@ class FileWriter(Thread):
         self.setDaemon(True)
         self._log_line_queue = Queue()
         self._stop = Event()
-        self.logger = logging.getLogger(name)
+        self.logger = logging.getLogger(self.__class__.__name__)
         self._callback = callback
         codecs.register_error('backslashreplace', self.backslash_replace)
 
